@@ -1,23 +1,22 @@
-use std::{fs::File, io::Write};
+use std::{
+    fs::File,
+    io::{BufWriter, Write},
+};
 
 use anyhow::Result;
+
+const OUTPUT_PATH: &str = "image.ppm";
 
 const IMAGE_WIDTH: usize = 256;
 const IMAGE_HEIGHT: usize = 256;
 
-const OUTPUT_PATH: &str = "image.ppm";
-
 fn main() -> Result<()> {
-    let mut ppm = Vec::with_capacity(
-        1 // Format
-            + 1 // Sizes
-            + 1 // Max color
-            + IMAGE_HEIGHT * IMAGE_WIDTH,
-    );
+    let file = File::create(OUTPUT_PATH)?;
+    let mut output = BufWriter::new(file);
 
-    ppm.push("P3".to_string());
-    ppm.push(format!("{} {}", IMAGE_WIDTH, IMAGE_HEIGHT));
-    ppm.push("255".to_string());
+    writeln!(&mut output, "P3")?;
+    writeln!(&mut output, "{} {}", IMAGE_WIDTH, IMAGE_HEIGHT)?;
+    writeln!(&mut output, "255")?;
 
     for row in (0..IMAGE_HEIGHT).rev() {
         for column in 0..IMAGE_WIDTH {
@@ -29,12 +28,9 @@ fn main() -> Result<()> {
             let g = (256f32 * g) as u8;
             let b = (256f32 * b) as u8;
 
-            ppm.push(format!("{} {} {}", r, g, b));
+            writeln!(&mut output, "{} {} {}", r, g, b)?;
         }
     }
-
-    let mut output = File::create(OUTPUT_PATH)?;
-    writeln!(&mut output, "{}", ppm.join("\n")).unwrap();
 
     Ok(())
 }
