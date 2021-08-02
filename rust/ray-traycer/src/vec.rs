@@ -38,6 +38,14 @@ impl Vec3 {
     pub fn length(&self) -> f64 {
         self.length_squared().sqrt()
     }
+
+    // Operations
+
+    pub fn to_unit(&self) -> Self {
+        let mut unit = *self;
+        unit /= unit.length();
+        unit
+    }
 }
 
 // Default constructor
