@@ -11,6 +11,8 @@ const IMAGE_WIDTH: usize = 256;
 const IMAGE_HEIGHT: usize = 256;
 
 fn main() -> Result<()> {
+    env_logger::init();
+
     let file = File::create(OUTPUT_PATH)?;
     let mut output = BufWriter::new(file);
 
@@ -19,6 +21,8 @@ fn main() -> Result<()> {
     writeln!(&mut output, "255")?;
 
     for row in (0..IMAGE_HEIGHT).rev() {
+        log::info!("Lines remaining: {}/{}", row + 1, IMAGE_HEIGHT);
+
         for column in 0..IMAGE_WIDTH {
             let r = (column as f32) / (IMAGE_WIDTH as f32 - 1f32);
             let g = (row as f32) / (IMAGE_HEIGHT as f32 - 1f32);
@@ -31,6 +35,8 @@ fn main() -> Result<()> {
             writeln!(&mut output, "{} {} {}", r, g, b)?;
         }
     }
+
+    log::info!("Done");
 
     Ok(())
 }
