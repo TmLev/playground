@@ -2,6 +2,7 @@ use crate::Vec3;
 
 pub type Point3 = Vec3;
 
+#[derive(Copy, Clone, Default)]
 pub struct Ray {
     origin: Point3,
     direction: Vec3,
@@ -22,14 +23,5 @@ impl Ray {
 
     pub fn at(&self, t: f64) -> Point3 {
         self.origin + self.direction * t
-    }
-}
-
-impl Default for Ray {
-    fn default() -> Self {
-        Self {
-            origin: Default::default(),
-            direction: Default::default(),
-        }
     }
 }

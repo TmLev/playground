@@ -4,7 +4,7 @@ use std::ops::{
 };
 
 // TODO(TmLev): generalise over inner type and size, i.e. Vec<5, u8>
-#[derive(Clone, Copy)]
+#[derive(Copy, Clone, Default)]
 pub struct Vec3 {
     coordinates: [f64; 3],
 }
@@ -61,16 +61,6 @@ impl Vec3 {
                 self[2] * other[0] - self[0] * other[2],
                 self[0] * other[1] - self[1] * other[0],
             ],
-        }
-    }
-}
-
-// Default constructor
-
-impl Default for Vec3 {
-    fn default() -> Self {
-        Self {
-            coordinates: Default::default(),
         }
     }
 }
