@@ -5,10 +5,14 @@ use std::{
 
 use anyhow::Result;
 
+use ray_traycer::Vec3;
+
 const OUTPUT_PATH: &str = "image.ppm";
 
 const IMAGE_WIDTH: usize = 256;
 const IMAGE_HEIGHT: usize = 256;
+
+type Color = Vec3;
 
 fn main() -> Result<()> {
     env_logger::init();
@@ -24,19 +28,25 @@ fn main() -> Result<()> {
         log::info!("Lines remaining: {}/{}", row + 1, IMAGE_HEIGHT);
 
         for column in 0..IMAGE_WIDTH {
-            let r = (column as f32) / (IMAGE_WIDTH as f32 - 1f32);
-            let g = (row as f32) / (IMAGE_HEIGHT as f32 - 1f32);
-            let b = 0.25f32;
-
-            let r = (256f32 * r) as u8;
-            let g = (256f32 * g) as u8;
-            let b = (256f32 * b) as u8;
-
-            writeln!(&mut output, "{} {} {}", r, g, b)?;
+            let r = (column as f64) / (IMAGE_WIDTH as f64 - 1f64);
+            let g = (row as f64) / (IMAGE_HEIGHT as f64 - 1f64);
+            let b = 0.25f64;
+            write_color(&mut output, Color::new(r, g, b));
         }
     }
 
     log::info!("Done");
 
     Ok(())
+}
+
+fn write_color(output: &mut impl Write, color: Color) {
+    writeln!(
+        output,
+        "{} {} {}",
+        (256f64 * color.x()) as u8,
+        (256f64 * color.y()) as u8,
+        (256f64 * color.z()) as u8,
+    )
+    .unwrap();
 }
