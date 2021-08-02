@@ -46,6 +46,23 @@ impl Vec3 {
         unit /= unit.length();
         unit
     }
+
+    pub fn dot(&self, other: &Self) -> f64 {
+        self.coordinates
+            .iter()
+            .zip(other.coordinates.iter())
+            .fold(0.0, |acc, (&s, &o)| acc + s * o)
+    }
+
+    pub fn cross(&self, other: &Self) -> Self {
+        Self {
+            coordinates: [
+                self[1] * other[2] - self[2] * other[1],
+                self[2] * other[0] - self[0] * other[2],
+                self[0] * other[1] - self[1] * other[0],
+            ],
+        }
+    }
 }
 
 // Default constructor
