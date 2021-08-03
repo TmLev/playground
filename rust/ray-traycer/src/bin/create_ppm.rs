@@ -6,7 +6,9 @@ use std::{
 
 use anyhow::Result;
 
-use ray_traycer::{config, materials, Camera, Color, Hittable, HittableList, Point3, Ray, Sphere};
+use ray_traycer::{
+    config, materials, Camera, Color, Hittable, HittableList, Point3, Ray, Sphere, Vec3,
+};
 
 fn main() -> Result<()> {
     // Logging
@@ -53,7 +55,7 @@ fn main() -> Result<()> {
     )));
     world.add(Rc::new(Sphere::new(
         Point3::new(-1.0, 0.0, -1.0),
-        -0.4,
+        -0.45,
         material_left,
     )));
     world.add(Rc::new(Sphere::new(
@@ -63,7 +65,14 @@ fn main() -> Result<()> {
     )));
 
     // Camera
-    let camera = Camera::new();
+
+    let camera = Camera::new(
+        Point3::new(-2.0, 2.0, 1.0),
+        Point3::new(0.0, 0.0, -1.0),
+        Vec3::new(0.0, 1.0, 0.0),
+        20.0,
+        config::ASPECT_RATIO,
+    );
 
     // Render
 
