@@ -1,18 +1,12 @@
 use std::{
     fs::File,
     io::{BufWriter, Write},
+    rc::Rc,
 };
 
 use anyhow::Result;
 
-use ray_traycer::{Hittable, HittableList, Point3, Ray, Sphere, Vec3};
-use std::rc::Rc;
-
-const OUTPUT_PATH: &str = "image.ppm";
-
-const ASPECT_RATIO: f64 = 16.0 / 9.0;
-const IMAGE_WIDTH: usize = 400;
-const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as usize;
+use ray_traycer::{config, Hittable, HittableList, Point3, Ray, Sphere, Vec3};
 
 type Color = Vec3;
 
@@ -23,11 +17,16 @@ fn main() -> Result<()> {
 
     // Output
 
-    let file = File::create(OUTPUT_PATH)?;
+    let file = File::create(config::OUTPUT_PATH)?;
     let mut output = BufWriter::new(file);
 
     writeln!(&mut output, "P3")?;
-    writeln!(&mut output, "{} {}", IMAGE_WIDTH, IMAGE_HEIGHT)?;
+    writeln!(
+        &mut output,
+        "{} {}",
+        config::IMAGE_WIDTH,
+        config::IMAGE_HEIGHT
+    )?;
     writeln!(&mut output, "255")?;
 
     // World
@@ -38,24 +37,14 @@ fn main() -> Result<()> {
 
     // Camera
 
-    let viewport_height = 2.0;
-    let viewport_width = ASPECT_RATIO * viewport_height;
-    let focal_length = 1.0;
-
-    let origin = Point3::default();
-    let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
-    let vertical = Vec3::new(0.0, viewport_height, 0.0);
-    let lower_left_corner =
-        origin - horizontal / 2.0 - vertical / 2.0 - Vec3::new(0.0, 0.0, focal_length);
-
     // Render
 
-    for row in (0..IMAGE_HEIGHT).rev() {
+    for row in (0..config::IMAGE_HEIGHT).rev() {
         log::info!("Lines remaining: {}/{}", row + 1, IMAGE_HEIGHT);
 
-        for column in 0..IMAGE_WIDTH {
-            let u = (column as f64) / (IMAGE_WIDTH as f64 - 1.0);
-            let v = (row as f64) / (IMAGE_HEIGHT as f64 - 1.0);
+        for column in 0..config::IMAGE_WIDTH {
+            let u = (column as f64) / (config::IMAGE_WIDTH as f64 - 1.0);
+            let v = (row as f64) / (config::IMAGE_HEIGHT as f64 - 1.0);
             let ray = Ray::new(
                 origin,
                 lower_left_corner + horizontal * u + vertical * v - origin,
