@@ -160,8 +160,8 @@ impl DivAssign<f64> for Vec3 {
 impl Div<f64> for Vec3 {
     type Output = Self;
 
-    fn div(mut self, rhs: f64) -> Self::Output {
-        self /= rhs;
+    fn div(mut self, scalar: f64) -> Self::Output {
+        self /= scalar;
         self
     }
 }
