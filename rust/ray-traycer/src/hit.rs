@@ -28,6 +28,10 @@ impl HitRecord {
         };
     }
 
+    pub fn point(&self) -> &Point3 {
+        &self.point
+    }
+
     pub fn normal(&self) -> &Vec3 {
         &self.normal
     }
