@@ -6,9 +6,7 @@ use std::{
 
 use anyhow::Result;
 
-use ray_traycer::{config, Camera, Hittable, HittableList, Point3, Ray, Sphere, Vec3};
-
-type Color = Vec3;
+use ray_traycer::{config, materials, Camera, Color, Hittable, HittableList, Point3, Ray, Sphere};
 
 fn main() -> Result<()> {
     // Logging
@@ -32,8 +30,32 @@ fn main() -> Result<()> {
     // World
 
     let mut world = HittableList::default();
-    world.add(Rc::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5)));
-    world.add(Rc::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
+
+    let material_ground = Rc::new(materials::Lambertian::new(Color::new(0.8, 0.8, 0.0)));
+    let material_center = Rc::new(materials::Lambertian::new(Color::new(0.7, 0.3, 0.3)));
+    let material_left = Rc::new(materials::Metal::new(Color::new(0.8, 0.8, 0.8)));
+    let material_right = Rc::new(materials::Metal::new(Color::new(0.8, 0.6, 0.2)));
+
+    world.add(Rc::new(Sphere::new(
+        Point3::new(0.0, -100.5, -1.0),
+        100.0,
+        material_ground,
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(0.0, 0.0, -1.0),
+        0.5,
+        material_center,
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(-1.0, 0.0, -1.0),
+        0.5,
+        material_left,
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(1.0, 0.0, -1.0),
+        0.5,
+        material_right,
+    )));
 
     // Camera
     let camera = Camera::new();
@@ -86,14 +108,19 @@ fn ray_color(ray: &Ray, world: &impl Hittable, depth: usize) -> Color {
 
     match world.hit(ray, 0.001, f64::INFINITY) {
         Some(record) => {
-            let target = *record.point() + *record.normal() + Vec3::random_unit();
-            let ray = Ray::new(*record.point(), target - *record.point());
-            ray_color(&ray, world, depth - 1) * 0.5
+            let scatter = record.material().scatter(ray, &record);
+            match scatter.happened {
+                false => Color::default(),
+                true => {
+                    scatter.attenuation.unwrap()
+                        * ray_color(&scatter.scattered.unwrap(), world, depth - 1)
+                }
+            }
         }
         None => {
             let direction = ray.direction().to_unit();
             let t = 0.5 * (direction.y() + 1.0);
-            Color::new(1.0, 1.0, 1.0) * (1.0 - t) + Color::new(0.5, 0.7, 1.0) * t
+            (1.0 - t) + t * Color::new(0.5, 0.7, 1.0)
         }
     }
 }
