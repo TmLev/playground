@@ -1,6 +1,10 @@
 use crate::{Color, HitRecord, Ray};
 
 mod lambertian;
+mod metal;
+
+pub use lambertian::Lambertian;
+pub use metal::Metal;
 
 pub trait Material {
     fn scatter(&self, ray: &Ray, record: &HitRecord) -> ScatterResult;

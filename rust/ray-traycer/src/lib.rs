@@ -2,7 +2,7 @@ mod camera;
 mod color;
 pub mod config;
 mod hit;
-mod materials;
+pub mod materials;
 mod ray;
 mod sphere;
 mod vec;
