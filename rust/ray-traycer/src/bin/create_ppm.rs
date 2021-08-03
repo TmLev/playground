@@ -6,7 +6,7 @@ use std::{
 
 use anyhow::Result;
 
-use ray_traycer::{config, Hittable, HittableList, Point3, Ray, Sphere, Vec3};
+use ray_traycer::{config, Camera, Hittable, HittableList, Point3, Ray, Sphere, Vec3};
 
 type Color = Vec3;
 
@@ -36,20 +36,24 @@ fn main() -> Result<()> {
     world.add(Rc::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
 
     // Camera
+    let camera = Camera::new();
 
     // Render
 
     for row in (0..config::IMAGE_HEIGHT).rev() {
-        log::info!("Lines remaining: {}/{}", row + 1, IMAGE_HEIGHT);
+        log::info!("Lines remaining: {}/{}", row + 1, config::IMAGE_HEIGHT);
 
         for column in 0..config::IMAGE_WIDTH {
-            let u = (column as f64) / (config::IMAGE_WIDTH as f64 - 1.0);
-            let v = (row as f64) / (config::IMAGE_HEIGHT as f64 - 1.0);
-            let ray = Ray::new(
-                origin,
-                lower_left_corner + horizontal * u + vertical * v - origin,
-            );
-            write_color(&mut output, ray_color(&ray, &world));
+            let mut pixel_color = Color::default();
+
+            for sample in 0..config::SAMPLES_PER_PIXEL {
+                let u = (column as f64 + fastrand::f64()) / (config::IMAGE_WIDTH as f64 - 1.0);
+                let v = (row as f64 + fastrand::f64()) / (config::IMAGE_HEIGHT as f64 - 1.0);
+                let ray = camera.ray(u, v);
+                pixel_color += ray_color(&ray, &world);
+            }
+
+            write_color(&mut output, &pixel_color);
         }
     }
 
@@ -58,13 +62,19 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn write_color(output: &mut impl Write, color: Color) {
+fn write_color(output: &mut impl Write, color: &Color) {
+    let scale = 1.0 / config::SAMPLES_PER_PIXEL as f64;
+
+    let r = scale * color.x();
+    let g = scale * color.y();
+    let b = scale * color.z();
+
     writeln!(
         output,
         "{} {} {}",
-        (256.0 * color.x()) as u8,
-        (256.0 * color.y()) as u8,
-        (256.0 * color.z()) as u8,
+        (256.0 * r.clamp(0.0, 0.999)) as u8,
+        (256.0 * g.clamp(0.0, 0.999)) as u8,
+        (256.0 * b.clamp(0.0, 0.999)) as u8,
     )
     .unwrap();
 }
