@@ -103,17 +103,16 @@ fn random_scene() -> HittableList {
 
     for a in -11..11 {
         for b in -11..11 {
-            let choose_material = fastrand::f64();
             let center = Point3::new(
                 a as f64 + 0.9 * fastrand::f64(),
                 0.2,
                 b as f64 + 0.9 * fastrand::f64(),
             );
-
             if (center - Point3::new(4.0, 0.2, 0.0)).length() <= 0.9 {
                 continue;
             }
 
+            let choose_material = fastrand::f64();
             let material: Rc<dyn materials::Material> = if choose_material < 0.8 {
                 // Diffuse
                 let albedo = Color::random() * Color::random();
