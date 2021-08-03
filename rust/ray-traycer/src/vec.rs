@@ -101,6 +101,13 @@ impl Vec3 {
     pub fn reflect(&self, normal: &Self) -> Self {
         *self - 2.0 * self.dot(normal) * normal
     }
+
+    pub fn refract(&self, normal: &Self, etai_over_etat: f64) -> Self {
+        let cos_theta = (-self).dot(normal).min(1.0);
+        let perpendicular = etai_over_etat * (self + cos_theta * normal);
+        let parallel = -(1.0 - perpendicular.length_squared()).abs().sqrt() * normal;
+        perpendicular + parallel
+    }
 }
 
 // Indexing
