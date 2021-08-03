@@ -34,6 +34,25 @@ impl Vec3 {
         }
     }
 
+    pub fn random_unit() -> Self {
+        Self::random_in_unit_sphere().to_unit()
+    }
+
+    pub fn random_in_unit_disk() -> Self {
+        loop {
+            let vec = Self {
+                coordinates: [
+                    2.0 * fastrand::f64() - 1.0,
+                    2.0 * fastrand::f64() - 1.0,
+                    0.0,
+                ],
+            };
+            if vec.length_squared() < 1.0 {
+                return vec;
+            }
+        }
+    }
+
     pub fn random_in_unit_sphere() -> Self {
         loop {
             let vec = Self::random_rng(-1.0, 1.0);
@@ -41,10 +60,6 @@ impl Vec3 {
                 return vec;
             }
         }
-    }
-
-    pub fn random_unit() -> Self {
-        Self::random_in_unit_sphere().to_unit()
     }
 
     // Accessors
