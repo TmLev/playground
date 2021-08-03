@@ -46,11 +46,11 @@ fn main() -> Result<()> {
         for column in 0..config::IMAGE_WIDTH {
             let mut pixel_color = Color::default();
 
-            for sample in 0..config::SAMPLES_PER_PIXEL {
+            for _ in 0..config::SAMPLES_PER_PIXEL {
                 let u = (column as f64 + fastrand::f64()) / (config::IMAGE_WIDTH as f64 - 1.0);
                 let v = (row as f64 + fastrand::f64()) / (config::IMAGE_HEIGHT as f64 - 1.0);
                 let ray = camera.ray(u, v);
-                pixel_color += ray_color(&ray, &world);
+                pixel_color += ray_color(&ray, &world, config::MAX_DEPTH);
             }
 
             write_color(&mut output, &pixel_color);
@@ -65,9 +65,9 @@ fn main() -> Result<()> {
 fn write_color(output: &mut impl Write, color: &Color) {
     let scale = 1.0 / config::SAMPLES_PER_PIXEL as f64;
 
-    let r = scale * color.x();
-    let g = scale * color.y();
-    let b = scale * color.z();
+    let r = (scale * color.x()).sqrt();
+    let g = (scale * color.y()).sqrt();
+    let b = (scale * color.z()).sqrt();
 
     writeln!(
         output,
@@ -79,9 +79,17 @@ fn write_color(output: &mut impl Write, color: &Color) {
     .unwrap();
 }
 
-fn ray_color(ray: &Ray, world: &impl Hittable) -> Color {
-    match world.hit(ray, 0.0, f64::INFINITY) {
-        Some(record) => (*record.normal() + Color::new(1.0, 1.0, 1.0)) * 0.5,
+fn ray_color(ray: &Ray, world: &impl Hittable, depth: usize) -> Color {
+    if depth == 0 {
+        return Color::default();
+    }
+
+    match world.hit(ray, 0.001, f64::INFINITY) {
+        Some(record) => {
+            let target = *record.point() + *record.normal() + Vec3::random_unit();
+            let ray = Ray::new(*record.point(), target - *record.point());
+            ray_color(&ray, world, depth - 1) * 0.5
+        }
         None => {
             let direction = ray.direction().to_unit();
             let t = 0.5 * (direction.y() + 1.0);
