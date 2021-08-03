@@ -30,7 +30,7 @@ impl Camera {
     pub fn ray(&self, u: f64, v: f64) -> Ray {
         Ray::new(
             self.origin,
-            lower_left_corner + horizontal * u + vertical * v - origin,
+            self.lower_left_corner + self.horizontal * u + self.vertical * v - self.origin,
         )
     }
 }
