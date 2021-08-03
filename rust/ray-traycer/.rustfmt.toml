@@ -1,4 +1,4 @@
-edition = "2021"
+edition = "2018"
 fn_args_layout = "Tall"
 hard_tabs = false
 max_width = 100
