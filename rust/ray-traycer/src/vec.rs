@@ -1,6 +1,6 @@
-use std::fmt::{Display, Formatter};
-use std::ops::{
-    Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
+use std::{
+    fmt::{Display, Formatter},
+    ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign},
 };
 
 // TODO(TmLev): generalise over inner type and size, i.e. Vec<5, u8>
