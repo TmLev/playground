@@ -18,6 +18,35 @@ impl Vec3 {
         }
     }
 
+    pub fn random() -> Self {
+        Self {
+            coordinates: [fastrand::f64(), fastrand::f64(), fastrand::f64()],
+        }
+    }
+
+    pub fn random_rng(min: f64, max: f64) -> Self {
+        Self {
+            coordinates: [
+                (max - min) * fastrand::f64() + min,
+                (max - min) * fastrand::f64() + min,
+                (max - min) * fastrand::f64() + min,
+            ],
+        }
+    }
+
+    pub fn random_in_unit_sphere() -> Self {
+        loop {
+            let vec = Self::random_rng(-1.0, 1.0);
+            if vec.length_squared() < 1.0 {
+                return vec;
+            }
+        }
+    }
+
+    pub fn random_unit() -> Self {
+        Self::random_in_unit_sphere().to_unit()
+    }
+
     // Accessors
 
     pub fn x(&self) -> f64 {
