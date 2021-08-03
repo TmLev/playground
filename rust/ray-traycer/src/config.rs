@@ -6,3 +6,5 @@ pub const IMAGE_WIDTH: usize = 400;
 pub const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as usize;
 
 pub const SAMPLES_PER_PIXEL: usize = 100;
+
+pub const MAX_DEPTH: usize = 50;
