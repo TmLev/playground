@@ -6,7 +6,7 @@ use std::{
 
 use anyhow::Result;
 
-use ray_traycer::{
+use ray_tracer::{
     config, materials, Camera, Color, Hittable, HittableList, Point3, Ray, Sphere, Vec3,
 };
 
