@@ -6,6 +6,5 @@ Current status:
 - [x] List
 - [x] Retrieve
 - [x] Create
-- [ ] Update
-- [ ] Partially update
+- [x] Update
 - [ ] Delete
