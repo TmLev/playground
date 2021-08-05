@@ -1,8 +1,16 @@
-use rocket::{get, launch, response::status::NotFound, serde::json::Json};
+use rocket::{
+    get, launch, post,
+    response::status::{Created, NotFound},
+    serde::json::Json,
+};
 
 use diesel::prelude::*;
 
-use rest_api::{models::Artist, schema::artists, ApiError, PgConnection};
+use rest_api::{
+    models::{Artist, NewArtist},
+    schema::artists,
+    ApiError, PgConnection,
+};
 
 #[launch]
 fn rocket() -> _ {
@@ -10,7 +18,7 @@ fn rocket() -> _ {
         // State
         .attach(PgConnection::fairing())
         // Routes
-        .mount("/artists", rocket::routes![list, retrieve])
+        .mount("/artists", rocket::routes![list, retrieve, create])
 }
 
 #[get("/")]
@@ -35,5 +43,25 @@ async fn retrieve(
             NotFound(Json(ApiError {
                 details: e.to_string(),
             }))
+        })
+}
+
+#[post("/", data = "<artist>")]
+async fn create(
+    connection: PgConnection,
+    artist: Json<NewArtist>,
+) -> Result<Created<Json<Artist>>, Json<ApiError>> {
+    connection
+        .run(move |c| {
+            diesel::insert_into(artists::table)
+                .values(&artist.into_inner())
+                .get_result(c)
+        })
+        .await
+        .map(|a| Created::new("/").body(Json(a)))
+        .map_err(|e| {
+            Json(ApiError {
+                details: e.to_string(),
+            })
         })
 }
