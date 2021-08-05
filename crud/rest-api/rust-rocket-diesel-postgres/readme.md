@@ -7,4 +7,4 @@ Current status:
 - [x] Retrieve
 - [x] Create
 - [x] Update
-- [ ] Delete
+- [x] Destroy
