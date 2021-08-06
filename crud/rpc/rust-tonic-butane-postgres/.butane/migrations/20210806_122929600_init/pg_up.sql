@@ -1,0 +1,8 @@
+CREATE TABLE Artist (
+id SERIAL NOT NULL PRIMARY KEY,
+name TEXT NOT NULL,
+description TEXT NOT NULL
+);
+CREATE TABLE butane_migrations (
+name TEXT NOT NULL PRIMARY KEY
+);
