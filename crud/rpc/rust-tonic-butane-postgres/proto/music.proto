@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package music;
+
+service Music {
+  rpc ListArtists(ArtistsListRequest) returns (ArtistsListResponse);
+  rpc RetrieveArtist(ArtistRetrieveRequest) returns (ArtistRetrieveResponse);
+  rpc CreateArtist(ArtistCreateRequest) returns (ArtistCreateResponse);
+  rpc UpdateArtist(ArtistUpdateRequest) returns (ArtistUpdateResponse);
+  rpc DestroyArtist(ArtistDestroyRequest) returns (ArtistDestroyResponse);
+}
+
+// Common
+
+message Artist {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message Artists {
+  repeated Artist artists = 1;
+}
+
+message Error {
+  string details = 1;
+}
+
+// List
+
+message ArtistsListRequest {}
+
+message ArtistsListResponse {
+  oneof result {
+    Artists artists = 1;
+    Error error = 2;
+  }
+}
+
+// Retrieve
+
+message ArtistRetrieveRequest {
+  int32 id = 1;
+}
+
+message ArtistRetrieveResponse {
+  oneof result {
+    Artist artist = 1;
+    Error error = 2;
+  }
+}
+
+// Create
+
+message ArtistCreateRequest {
+  string name = 1;
+  string description = 2;
+}
+
+message ArtistCreateResponse {
+  oneof result {
+    Artist artist = 1;
+    Error error = 2;
+  }
+}
+
+// Update
+
+message ArtistUpdateRequest {
+  int32 id = 1;
+  optional string name = 2;
+  optional string description = 3;
+}
+
+message ArtistUpdateResponse {
+  oneof result {
+    Artist artist = 1;
+    Error error = 2;
+  }
+}
+
+// Destroy
+
+message ArtistDestroyRequest {
+  int32 id = 1;
+}
+
+message ArtistDestroyResponse {
+  optional Error error = 1;
+}
