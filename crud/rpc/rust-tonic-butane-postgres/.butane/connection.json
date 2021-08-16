@@ -1,1 +1,0 @@
-{"backend_name":"pg","conn_str":"postgres://user:password@localhost:8003/db"}
