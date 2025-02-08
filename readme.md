@@ -20,4 +20,4 @@
 ## Future Plans
 
 - [ ] Embedded with STM32F3 Discovery kit in Rust
-- [ ] Simple Minecraft server in Rust
+- [ ] Simple Minecraft server in Rust. References: https://dayssincelastrustmcserver.com/
